@@ -1,5 +1,4 @@
 @echo off
-setlocal EnableDelayedExpansion
 set "LOCAL_VERSION=1.9.7b"
 
 :: External commands
@@ -33,14 +32,6 @@ if "%~1"=="load_user_lists" (
     exit /b
 )
 
-if "%~1"=="doctor" (
-    call :log "Doctor mode started"
-    call :service_diagnostics soft
-    set "doctor_rc=!errorlevel!"
-    call :log "Doctor mode finished with code !doctor_rc!"
-    exit /b !doctor_rc!
-)
-
 if "%1"=="admin" (
     call :check_command chcp
     call :check_command find
@@ -61,6 +52,7 @@ if "%1"=="admin" (
 
 
 :: MENU ================================
+setlocal EnableDelayedExpansion
 :menu
 cls
 call :ipset_switch_status
@@ -191,7 +183,6 @@ exit /b
 
 :: REMOVE ==============================
 :service_remove
-call :log "Service remove requested"
 cls
 chcp 65001 > nul
 
@@ -227,7 +218,6 @@ goto menu
 
 :: INSTALL =============================
 :service_install
-call :log "Service install workflow started"
 cls
 chcp 437 > nul
 
@@ -369,7 +359,6 @@ goto menu
 
 :: CHECK UPDATES =======================
 :service_check_updates
-call :log "Manual update check started"
 chcp 437 > nul
 cls
 
@@ -414,21 +403,13 @@ goto menu
 :: DIAGNOSTICS =========================
 :service_diagnostics
 chcp 437 > nul
-if not "%~1"=="soft" cls
-
-set "diag_soft=0"
-if /i "%~1"=="soft" set "diag_soft=1"
-set "diag_has_error=0"
-set "diag_has_warn=0"
-
-call :log "Diagnostics started (soft=!diag_soft!)"
+cls
 
 :: Base Filtering Engine
 sc query BFE | findstr /I "RUNNING" > nul
 if !errorlevel!==0 (
     call :PrintGreen "Base Filtering Engine check passed"
 ) else (
-    set "diag_has_error=1"
     call :PrintRed "[X] Base Filtering Engine is not running. This service is required for zapret to work"
 )
 echo:
@@ -446,7 +427,6 @@ if !proxyEnabled!==1 (
         set "proxyServer=%%B"
     )
     
-    set "diag_has_warn=1"
     call :PrintYellow "[?] System proxy is enabled: !proxyServer!"
     call :PrintYellow "Make sure it's valid or disable it if you don't use a proxy"
 ) else (
@@ -459,13 +439,11 @@ netsh interface tcp show global | findstr /i "timestamps" | findstr /i "enabled"
 if !errorlevel!==0 (
     call :PrintGreen "TCP timestamps check passed"
 ) else (
-    set "diag_has_warn=1"
     call :PrintYellow "[?] TCP timestamps are disabled. Enabling timestamps..."
     netsh interface tcp set global timestamps=enabled > nul 2>&1
     if !errorlevel!==0 (
         call :PrintGreen "TCP timestamps successfully enabled"
     ) else (
-        set "diag_has_error=1"
         call :PrintRed "[X] Failed to enable TCP timestamps"
     )
 )
@@ -474,7 +452,6 @@ echo:
 :: AdguardSvc.exe
 tasklist /FI "IMAGENAME eq AdguardSvc.exe" | find /I "AdguardSvc.exe" > nul
 if !errorlevel!==0 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] Adguard process found. Adguard may cause problems with Discord"
     call :PrintRed "https://github.com/Flowseal/zapret-discord-youtube/issues/417"
 ) else (
@@ -485,7 +462,6 @@ echo:
 :: Killer
 sc query | findstr /I "Killer" > nul
 if !errorlevel!==0 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] Killer services found. Killer conflicts with zapret"
     call :PrintRed "https://github.com/Flowseal/zapret-discord-youtube/issues/2512#issuecomment-2821119513"
 ) else (
@@ -496,7 +472,6 @@ echo:
 :: Intel Connectivity Network Service
 sc query | findstr /I "Intel" | findstr /I "Connectivity" | findstr /I "Network" > nul
 if !errorlevel!==0 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] Intel Connectivity Network Service found. It conflicts with zapret"
     call :PrintRed "https://github.com/ValdikSS/GoodbyeDPI/issues/541#issuecomment-2661670982"
 ) else (
@@ -517,7 +492,6 @@ if !errorlevel!==0 (
 )
 
 if !checkpointFound!==1 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] Check Point services found. Check Point conflicts with zapret"
     call :PrintRed "Try to uninstall Check Point"
 ) else (
@@ -528,7 +502,6 @@ echo:
 :: SmartByte
 sc query | findstr /I "SmartByte" > nul
 if !errorlevel!==0 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] SmartByte services found. SmartByte conflicts with zapret"
     call :PrintRed "Try to uninstall or disable SmartByte through services.msc"
 ) else (
@@ -539,7 +512,6 @@ echo:
 :: WinDivert64.sys file
 set "BIN_PATH=%~dp0bin\"
 if not exist "%BIN_PATH%\*.sys" (
-    set "diag_has_error=1"
     call :PrintRed "WinDivert64.sys file NOT found."
     echo:
 )
@@ -555,7 +527,6 @@ if !errorlevel!==0 (
             set "VPN_SERVICES=!VPN_SERVICES!,%%A"
         )
     )
-    set "diag_has_warn=1"
     call :PrintYellow "[?] VPN services found:!VPN_SERVICES!. Some VPNs can conflict with zapret"
     call :PrintYellow "Make sure that all VPNs are disabled"
 ) else (
@@ -571,7 +542,6 @@ for /f "delims=" %%a in ('powershell -NoProfile -Command "Get-ChildItem -Recurse
     )
 )
 if !dohfound!==0 (
-    set "diag_has_warn=1"
     call :PrintYellow "[?] Make sure you have configured secure DNS in a browser with some non-default DNS service provider,"
     call :PrintYellow "If you use Windows 11 you can configure encrypted DNS in the Settings to hide this warning"
 ) else (
@@ -586,7 +556,6 @@ if exist "%hostsFile%" (
     >nul 2>&1 findstr /I "youtube.com" "%hostsFile%" && set "yt_found=1"
     >nul 2>&1 findstr /I "yotou.be" "%hostsFile%" && set "yt_found=1"
     if !yt_found!==1 (
-        set "diag_has_warn=1"
         call :PrintYellow "[?] Your hosts file contains entries for youtube.com or yotou.be. This may cause problems with YouTube access"
     )
 )
@@ -664,18 +633,13 @@ for %%s in (!conflicting_services!) do (
 )
 
 if !found_any_conflict!==1 (
-    set "diag_has_warn=1"
     call :PrintRed "[X] Conflicting bypass services found: !found_conflicts!"
-
-    if not "!diag_soft!"=="1" (
-        set "CHOICE="
-        set /p "CHOICE=Do you want to remove these conflicting services? (Y/N) (default: N) "
-        if "!CHOICE!"=="" set "CHOICE=N"
-        if "!CHOICE!"=="y" set "CHOICE=Y"
-    ) else (
-        set "CHOICE=N"
-    )
-
+    
+    set "CHOICE="
+    set /p "CHOICE=Do you want to remove these conflicting services? (Y/N) (default: N) "
+    if "!CHOICE!"=="" set "CHOICE=N"
+    if "!CHOICE!"=="y" set "CHOICE=Y"
+    
     if /i "!CHOICE!"=="Y" (
         for %%s in (!found_conflicts!) do (
             call :PrintYellow "Stopping and removing service: %%s"
@@ -698,7 +662,6 @@ if !found_any_conflict!==1 (
 )
 
 :: Discord cache clearing
-if not "!diag_soft!"=="1" (
 set "CHOICE="
 set /p "CHOICE=Do you want to clear the Discord cache? (Y/N) (default: Y)  "
 if "!CHOICE!"=="" set "CHOICE=Y"
@@ -732,15 +695,7 @@ if /i "!CHOICE!"=="Y" (
         )
     )
 )
-)
 echo:
-
-call :log "Diagnostics finished: warn=!diag_has_warn! error=!diag_has_error!"
-if "!diag_soft!"=="1" (
-    if not "!diag_has_error!"=="0" exit /b 2
-    if not "!diag_has_warn!"=="0" exit /b 1
-    exit /b 0
-)
 
 pause
 goto menu
@@ -1014,7 +969,6 @@ goto menu
 
 :: RUN TESTS =============================
 :run_tests
-call :log "Run tests requested"
 chcp 437 >nul
 cls
 
@@ -1047,12 +1001,6 @@ exit /b
 
 :PrintYellow
 powershell -NoProfile -Command "Write-Host \"%~1\" -ForegroundColor Yellow"
-exit /b
-
-
-:log
-if not exist "%~dp0logs" mkdir "%~dp0logs" >nul 2>&1
->>"%~dp0logs\service.log" echo [%date% %time%] %~1
 exit /b
 
 :check_command
