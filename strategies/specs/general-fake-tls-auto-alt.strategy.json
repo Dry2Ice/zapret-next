@@ -1,0 +1,221 @@
+{
+  "specVersion": "1.0.0",
+  "id": "general-fake-tls-auto-alt",
+  "priority": 100,
+  "sourceBat": "general (FAKE TLS AUTO ALT).bat",
+  "engine": {
+    "binary": "\"%BIN%winws.exe\"",
+    "wfTcp": "80,443,2053,2083,2087,2096,8443,%GameFilterTCP%",
+    "wfUdp": "443,19294-19344,50000-50100,%GameFilterUDP%"
+  },
+  "filters": {
+    "stages": [
+      {
+        "index": 0,
+        "filters": {
+          "filter-udp": "443",
+          "hostlist": "\"%LISTS%list-general-user.txt\"",
+          "hostlist-exclude": "\"%LISTS%list-exclude-user.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake",
+          "dpi-desync-repeats": "11",
+          "dpi-desync-fake-quic": "\"%BIN%quic_initial_www_google_com.bin\""
+        },
+        "requiredAssets": [
+          "%BIN%quic_initial_www_google_com.bin",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt",
+          "%LISTS%list-exclude-user.txt",
+          "%LISTS%list-exclude.txt",
+          "%LISTS%list-general-user.txt",
+          "%LISTS%list-general.txt"
+        ]
+      },
+      {
+        "index": 1,
+        "filters": {
+          "filter-udp": "19294-19344,50000-50100",
+          "filter-l7": "discord,stun"
+        },
+        "desyncParams": {
+          "dpi-desync": "fake",
+          "dpi-desync-repeats": "6"
+        },
+        "requiredAssets": []
+      },
+      {
+        "index": 2,
+        "filters": {
+          "filter-tcp": "2053,2083,2087,2096,8443",
+          "hostlist-domains": "discord.media"
+        },
+        "desyncParams": {
+          "dpi-desync": "fake,fakedsplit",
+          "dpi-desync-split-pos": "1",
+          "dpi-desync-fooling": "badseq",
+          "dpi-desync-badseq-increment": "2",
+          "dpi-desync-repeats": "8",
+          "dpi-desync-fake-tls-mod": "rnd,dupsid,sni=www.google.com"
+        },
+        "requiredAssets": []
+      },
+      {
+        "index": 3,
+        "filters": {
+          "filter-tcp": "443",
+          "hostlist": "\"%LISTS%list-google.txt\"",
+          "ip-id": "zero"
+        },
+        "desyncParams": {
+          "dpi-desync": "fake,fakedsplit",
+          "dpi-desync-split-pos": "1",
+          "dpi-desync-fooling": "badseq",
+          "dpi-desync-badseq-increment": "2",
+          "dpi-desync-repeats": "8",
+          "dpi-desync-fake-tls-mod": "rnd,dupsid,sni=www.google.com"
+        },
+        "requiredAssets": [
+          "%LISTS%list-google.txt"
+        ]
+      },
+      {
+        "index": 4,
+        "filters": {
+          "filter-tcp": "80,443",
+          "hostlist": "\"%LISTS%list-general-user.txt\"",
+          "hostlist-exclude": "\"%LISTS%list-exclude-user.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake,fakedsplit",
+          "dpi-desync-split-pos": "1",
+          "dpi-desync-fooling": "badseq",
+          "dpi-desync-badseq-increment": "2",
+          "dpi-desync-repeats": "8",
+          "dpi-desync-fake-tls-mod": "rnd,dupsid,sni=www.google.com",
+          "dpi-desync-fake-http": "\"%BIN%tls_clienthello_max_ru.bin\""
+        },
+        "requiredAssets": [
+          "%BIN%tls_clienthello_max_ru.bin",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt",
+          "%LISTS%list-exclude-user.txt",
+          "%LISTS%list-exclude.txt",
+          "%LISTS%list-general-user.txt",
+          "%LISTS%list-general.txt"
+        ]
+      },
+      {
+        "index": 5,
+        "filters": {
+          "filter-udp": "443",
+          "ipset": "\"%LISTS%ipset-all.txt\"",
+          "hostlist-exclude": "\"%LISTS%list-exclude-user.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake",
+          "dpi-desync-repeats": "11",
+          "dpi-desync-fake-quic": "\"%BIN%quic_initial_www_google_com.bin\""
+        },
+        "requiredAssets": [
+          "%BIN%quic_initial_www_google_com.bin",
+          "%LISTS%ipset-all.txt",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt",
+          "%LISTS%list-exclude-user.txt",
+          "%LISTS%list-exclude.txt"
+        ]
+      },
+      {
+        "index": 6,
+        "filters": {
+          "filter-tcp": "80,443,8443",
+          "ipset": "\"%LISTS%ipset-all.txt\"",
+          "hostlist-exclude": "\"%LISTS%list-exclude-user.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake,fakedsplit",
+          "dpi-desync-split-pos": "1",
+          "dpi-desync-fooling": "badseq",
+          "dpi-desync-badseq-increment": "2",
+          "dpi-desync-repeats": "8",
+          "dpi-desync-fake-tls-mod": "rnd,dupsid,sni=www.google.com",
+          "dpi-desync-fake-http": "\"%BIN%tls_clienthello_max_ru.bin\""
+        },
+        "requiredAssets": [
+          "%BIN%tls_clienthello_max_ru.bin",
+          "%LISTS%ipset-all.txt",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt",
+          "%LISTS%list-exclude-user.txt",
+          "%LISTS%list-exclude.txt"
+        ]
+      },
+      {
+        "index": 7,
+        "filters": {
+          "filter-tcp": "%GameFilterTCP%",
+          "ipset": "\"%LISTS%ipset-all.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake,fakedsplit",
+          "dpi-desync-any-protocol": "1",
+          "dpi-desync-cutoff": "n3",
+          "dpi-desync-split-pos": "1",
+          "dpi-desync-fooling": "badseq",
+          "dpi-desync-badseq-increment": "2",
+          "dpi-desync-repeats": "8",
+          "dpi-desync-fake-tls-mod": "rnd,dupsid,sni=www.google.com",
+          "dpi-desync-fake-http": "\"%BIN%tls_clienthello_max_ru.bin\""
+        },
+        "requiredAssets": [
+          "%BIN%tls_clienthello_max_ru.bin",
+          "%LISTS%ipset-all.txt",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt"
+        ]
+      },
+      {
+        "index": 8,
+        "filters": {
+          "filter-udp": "%GameFilterUDP%",
+          "ipset": "\"%LISTS%ipset-all.txt\"",
+          "ipset-exclude": "\"%LISTS%ipset-exclude-user.txt\""
+        },
+        "desyncParams": {
+          "dpi-desync": "fake",
+          "dpi-desync-repeats": "10",
+          "dpi-desync-any-protocol": "1",
+          "dpi-desync-fake-unknown-udp": "\"%BIN%quic_initial_www_google_com.bin\"",
+          "dpi-desync-cutoff": "n2"
+        },
+        "requiredAssets": [
+          "%BIN%quic_initial_www_google_com.bin",
+          "%LISTS%ipset-all.txt",
+          "%LISTS%ipset-exclude-user.txt",
+          "%LISTS%ipset-exclude.txt"
+        ]
+      }
+    ]
+  },
+  "desyncParams": {
+    "stageCount": 9
+  },
+  "requiredAssets": [
+    "%BIN%quic_initial_www_google_com.bin",
+    "%BIN%tls_clienthello_max_ru.bin",
+    "%LISTS%ipset-all.txt",
+    "%LISTS%ipset-exclude-user.txt",
+    "%LISTS%ipset-exclude.txt",
+    "%LISTS%list-exclude-user.txt",
+    "%LISTS%list-exclude.txt",
+    "%LISTS%list-general-user.txt",
+    "%LISTS%list-general.txt",
+    "%LISTS%list-google.txt"
+  ]
+}

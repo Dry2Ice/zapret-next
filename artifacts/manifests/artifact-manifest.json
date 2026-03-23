@@ -1,0 +1,26 @@
+{
+  "manifestVersion": "1.0.0",
+  "appVersion": "1.0.0",
+  "specVersion": "1.0.0",
+  "channels": {
+    "lists": {
+      "version": "1.0.0",
+      "sha256": "991043032befa267db164b1bbe025af153de90a12e2a79005b2c5fdb9dcb0013",
+      "lastUpdated": "generated"
+    },
+    "strategies": {
+      "version": "1.0.0",
+      "sha256": "490b4d5b9d5571003cd39a995b852aee74a0def7f02e3848e74d08d254f1d58f",
+      "lastUpdated": "generated"
+    },
+    "assets": {
+      "version": "1.0.0",
+      "sha256": "513b572fed3170ab72dddea2a21f3da8f4fa7891cc0b118de8f8b8b522f1b6fa",
+      "lastUpdated": "generated"
+    }
+  },
+  "signature": {
+    "algorithm": "sha256",
+    "value": "6d09dea42a8f7d259b01643d37b3cd6a9101fb8f44e6e2e377b751ae145e2104"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "general (ALT).bat": "strategies/specs/general-alt.strategy.json",
+  "general (ALT10).bat": "strategies/specs/general-alt10.strategy.json",
+  "general (ALT11).bat": "strategies/specs/general-alt11.strategy.json",
+  "general (ALT2).bat": "strategies/specs/general-alt2.strategy.json",
+  "general (ALT3).bat": "strategies/specs/general-alt3.strategy.json",
+  "general (ALT4).bat": "strategies/specs/general-alt4.strategy.json",
+  "general (ALT5).bat": "strategies/specs/general-alt5.strategy.json",
+  "general (ALT6).bat": "strategies/specs/general-alt6.strategy.json",
+  "general (ALT7).bat": "strategies/specs/general-alt7.strategy.json",
+  "general (ALT8).bat": "strategies/specs/general-alt8.strategy.json",
+  "general (ALT9).bat": "strategies/specs/general-alt9.strategy.json",
+  "general (FAKE TLS AUTO ALT).bat": "strategies/specs/general-fake-tls-auto-alt.strategy.json",
+  "general (FAKE TLS AUTO ALT2).bat": "strategies/specs/general-fake-tls-auto-alt2.strategy.json",
+  "general (FAKE TLS AUTO ALT3).bat": "strategies/specs/general-fake-tls-auto-alt3.strategy.json",
+  "general (FAKE TLS AUTO).bat": "strategies/specs/general-fake-tls-auto.strategy.json",
+  "general (SIMPLE FAKE ALT).bat": "strategies/specs/general-simple-fake-alt.strategy.json",
+  "general (SIMPLE FAKE ALT2).bat": "strategies/specs/general-simple-fake-alt2.strategy.json",
+  "general (SIMPLE FAKE).bat": "strategies/specs/general-simple-fake.strategy.json",
+  "general.bat": "strategies/specs/general.strategy.json"
+}
