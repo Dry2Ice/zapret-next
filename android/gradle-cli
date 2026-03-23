@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if ! command -v gradle >/dev/null 2>&1; then
+  echo "Gradle is not installed or not available in PATH." >&2
+  exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+  cat <<'USAGE'
+Zapret Android Gradle CLI
+Usage:
+  ./android/gradle-cli <gradle-task> [-- additional args]
+
+Examples:
+  ./android/gradle-cli tasks
+  ./android/gradle-cli :app:testDebugUnitTest
+  ./android/gradle-cli :app:assembleDebug -- --stacktrace
+USAGE
+  exit 0
+fi
+
+TASK="$1"
+shift
+
+EXTRA_ARGS=()
+if [ "$#" -gt 0 ] && [ "$1" = "--" ]; then
+  shift
+fi
+if [ "$#" -gt 0 ]; then
+  EXTRA_ARGS=("$@")
+fi
+
+exec gradle -p "$ROOT_DIR" "$TASK" "${EXTRA_ARGS[@]}"
